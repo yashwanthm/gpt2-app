@@ -34,3 +34,42 @@ Model Location
 
 
 Check the logs at OpenShift Console > Admin > Workloads > Pods > find the server name here > Logs > 
+
+
+
+# Create a Model Archive to serve with torchserve
+
+gpt2_handler.py
+
+```
+from ts.torch_handler.base_handler import BaseHandler
+from transformers import GPT2Tokenizer, GPT2LMHeadModel
+import torch
+
+
+class GPT2Handler(BaseHandler):
+    def initialize(self, context):
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        model_dir = context.system_properties.get("model_dir")
+        self.tokenizer = GPT2Tokenizer.from_pretrained(model_dir)
+        self.model = GPT2LMHeadModel.from_pretrained(model_dir)
+        self.model.to(self.device)
+        self.model.eval()
+
+    def preprocess(self, data):
+        input_text = data[0].get("data") or data[0].get("body")
+        inputs = self.tokenizer(input_text, return_tensors="pt")
+        return inputs
+
+    def inference(self, inputs):
+        inputs = {key: val.to(self.device) for key, val in inputs.items()}
+        outputs = self.model.generate(**inputs)
+        return outputs
+
+    def postprocess(self, inference_output):
+        output_text = self.tokenizer.decode(inference_output[0], skip_special_tokens=True)
+        return [output_text]
+```
+```
+torch-model-archiver --model-name gpt2 --version 1.0 --serialized-file gpt2/pytorch_model.bin --handler gpt2_handler.py --extra-files "gpt2/config.json,gpt2/vocab.json,gpt2/merges.txt" --export-path gpt2mar
+```
