@@ -19,12 +19,12 @@ Now, download this file https://github.com/cfchase/basic-kserve-vllm/blob/main/1
   - Upload gpt2-onnx and gpt2_ir
 
 ## Create model server
-
-## Serve the model
 Dashboard > Data Science Projects > Select Project > Select Models tab > Add Model Server
 Select runtime as OpenVINO Model Server, Select Make deployed models available through an external route, Unselect Require token authentication
 Notice the model server created and available
-Now, select Deploy Model
+
+## Serve the model
+Now, select Deploy Model option on the newly created server
 Name - gpt_ir
 Model Framework - openvino_ir - opset1
 Model Location
