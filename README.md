@@ -1,9 +1,3 @@
-Convert to vino or onnx using 
-omz_converter --name gpt-2
-
-You would have gpt-2.bin and gpt-2.xml files in the public directory, along with gpt-2.onnx
-
-
 ## Create a project
 
 Create a Data Connection to store the model
@@ -24,4 +18,19 @@ Now, download this file https://github.com/cfchase/basic-kserve-vllm/blob/main/1
   - Load the helper functions to upload
   - Upload gpt2-onnx and gpt2_ir
 
-## 
+## Create model server
+
+## Serve the model
+Dashboard > Data Science Projects > Select Project > Select Models tab > Add Model Server
+Select runtime as OpenVINO Model Server, Select Make deployed models available through an external route, Unselect Require token authentication
+Notice the model server created and available
+Now, select Deploy Model
+Name - gpt_ir
+Model Framework - openvino_ir - opset1
+Model Location
+  - Use existing data connection
+  - Name - My Storage
+  - Path - models/gpt2_ir
+
+
+Check the logs at OpenShift Console > Admin > Workloads > Pods > find the server name here > Logs > 
